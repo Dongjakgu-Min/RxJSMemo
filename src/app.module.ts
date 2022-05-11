@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Memo } from './memo/memo.entity';
 import { MemoModule } from './memo/memo.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MemoModule } from './memo/memo.module';
       database: process.env.DB_NAME,
       entities: [Memo],
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
