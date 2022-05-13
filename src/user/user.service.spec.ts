@@ -1,5 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { exec } from 'child_process';
+
+
+import * as dotenv from 'dotenv';
+
 import { Db, Repository } from 'typeorm';
 import UserDto from './user.dto';
 import { User } from './user.entity';
@@ -10,8 +16,29 @@ describe('UserService', () => {
   let module: TestingModule;
   let repository: Repository<User>;
 
+  afterEach(() => {
+    exec('docker-compose down', (err, stdout, stderr) => {
+      console.log(stdout);
+    });
+  });
+
   beforeEach(async () => {
+    dotenv.config({ path: './test.env' });
+
     module = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: 'localhost',
+          port: 5432,
+          username: process.env.DB_TEST_USERNAME,
+          password: process.env.DB_TEST_PASSWORD,
+          database: process.env.DB_NAME,
+          entities: [User],
+          synchronize: true,
+          keepConnectionAlive: true,
+        }),
+      ],
       providers: [
         UserService,
         {
@@ -23,10 +50,6 @@ describe('UserService', () => {
 
     service = module.get<UserService>(UserService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
-  });
-
-  afterEach(async () => {
-    module.close();
   });
 
   it('should be defined', () => {

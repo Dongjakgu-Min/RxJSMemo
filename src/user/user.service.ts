@@ -31,17 +31,15 @@ export class UserService {
     );
   }
 
-  updateUser(userDto: UserDto): Observable<UpdateResult> {
+  updateUser(userDto: UserDto): Observable<User> {
     return from(
       this.userRepository.findOne({ username: userDto.username }),
     ).pipe(
       map((user) => {
         if (!user) throw new Error();
-        return user.username;
+        return user;
       }),
-      switchMap((username) => {
-        return this.userRepository.update({ username }, userDto);
-      }),
+      switchMap((user) => this.userRepository.save({ ...user, ...userDto })),
     );
   }
 }

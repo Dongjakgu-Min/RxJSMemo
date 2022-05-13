@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  postgresql:
+    image: postgres:14
+    restart: always
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    env_file:
+      - db.env
+  # node:
+  #   image: node:14
+  #   working_dir: /usr/src/app
+  #   env_file:
+  #     - test.env
+  #   volumes:
+  #     - ./:/usr/src/app
+  #   ports:
+  #     - 80:3000
+  #   command: bash -c "npm install && npm test"
